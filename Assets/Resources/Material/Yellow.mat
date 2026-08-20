@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Bulley body 3
+  m_Name: Yellow
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_Parent: {fileID: 2100000, guid: 7f0a58b21d4f2fc4ca347491a789dfdc, type: 2}
+  m_Parent: {fileID: 2100000, guid: 52d804277b756e844ad691fb32e1924f, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -24,7 +24,8 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _Metallic: 0
     m_Colors:
-    - _Color: {r: 0.3062344, g: 0.4433962, b: 0.26143643, a: 1}
+    - _Color: {r: 0.9716981, g: 0.93231267, b: 0.022917405, a: 1}
   m_BuildTextureStacks: []

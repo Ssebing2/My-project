@@ -3,12 +3,12 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     [Header("이동 / 회전")]
-    [SerializeField] private float _moveSpeed = 45.0f;
+    [SerializeField] private float _moveSpeed = 5.0f;
     [SerializeField] private float _rotateSpeed = 120.0f;
 
     [Header("점프 (리지드 바디 필요")]
     [SerializeField] private float _jumpImpulse = 6.0f;
-    [SerializeField] private float _groundCheckDistance = 25f;
+    [SerializeField] private float _groundCheckDistance = 0.7f;
     [SerializeField] private LayerMask _groundMask = ~0;
 
     [Header("옵션")]
@@ -49,7 +49,7 @@ public class PlayerMove : MonoBehaviour
         move *= _moveSpeed * Time.deltaTime;
 
         transform.Rotate(Vector3.up * rotate);
-        transform.Translate(Vector3.forward*move, Space.Self);
+        transform.Translate(Vector3.forward * move, Space.Self);
 
 
     }

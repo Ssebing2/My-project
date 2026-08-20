@@ -87,12 +87,12 @@ public class CRaycastBasic : MonoBehaviour
 
         if (!centerHit)
         {
-            transform.Translate(Vector3.forward *_moveSpeed *Time.deltaTime);
+            transform.Translate(Vector3.forward * _moveSpeed * Time.deltaTime);
         }
 
         if (centerHit)
         {
-            if(leftHit && !rightHit)
+            if (leftHit && !rightHit)
             {
                 transform.Rotate(Vector3.up * _rotateSpeed * Time.deltaTime);
             }
@@ -115,7 +115,7 @@ public class CRaycastBasic : MonoBehaviour
 
     private void SuccessCamera()
     {
-        _mainCamera.transform.RotateAround(transform.position,Vector3.up,_cameraRotateSpeed * Time.deltaTime);
+        _mainCamera.transform.RotateAround(transform.position, Vector3.up, _cameraRotateSpeed * Time.deltaTime);
 
         _mainCamera.transform.LookAt(transform);
     }
