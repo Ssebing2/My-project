@@ -156,7 +156,7 @@ public static class CPrint
     }
 
     // 출력 포맷 관리를 위해
-    // 들여쓰기 / 접두사 / 리치 텍스트 → kind 분류 d
+    // 들여쓰기 / 접두사 / 리치 텍스트 → kind 분류
     private static void Emit(ELogKind kind, string msg, string tag = null, string colorHex = null)
     {
         // 지금까지 만든 문자열을 콘솔로 내보내는 출력 코어
@@ -201,15 +201,15 @@ public static class CPrint
         switch (kind)
         {
             case ELogKind.Log:
-                break;
-            case ELogKind.Success:
-                Debug.Log(final);
-                break;
+
             case ELogKind.Warn:
-                Debug.LogWarning(final);   
+                Debug.LogWarning(final);
                 break;
             case ELogKind.Error:
                 Debug.LogError(final);
+                break;
+            case ELogKind.Success:
+                Debug.Log(final);
                 break;
         }
 
@@ -234,7 +234,7 @@ public static class CPrint
     // Line / Blank
     // 구분선을 상황에 맞게 바꿀 수 있도록 문자 / 길이를 옵션을 준것
     //  ㄴ 고정 형식이 아니기 때문에 상황에 맞춰 사용하면 효율이 좋다.
-    public static void Line(char ch = '=', int count = 10)
+    public static void Line(char ch = '-', int count = 10)
     {
         Emit(ELogKind.Log, new string(ch, count));
     }
@@ -523,14 +523,14 @@ public static class CPrint
     //  ㄴ 규모가 적으면 속성으로 처리를 하고 함수가 많아지면 선택적 컴파일로 처리하면 된다.
     [System.Diagnostics.Conditional("UNITY_EDITOR")]
     [System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
-    public static void Ray(Vector3 a, Vector3 b, Color color, float duration = 0f)
+    public static void Ray(Vector3 origin, Vector3 direction, Color color, float duration = 0f)
     {
         if (!Enable)
         {
             return;
         }
 
-        Debug.DrawRay(a, b, color, duration);
+        Debug.DrawRay(origin, direction, color, duration);
     }
 
     [System.Diagnostics.Conditional("UNITY_EDITOR")]
