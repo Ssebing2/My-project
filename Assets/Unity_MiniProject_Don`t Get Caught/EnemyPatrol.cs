@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
+public enum EnemyState
+{
+    Patrol,
+    Chase,
+    Search
+}
 
 public class EnemyPatrol : MonoBehaviour
 {
@@ -15,12 +20,16 @@ public class EnemyPatrol : MonoBehaviour
     [SerializeField] private float _time = 0f;
     [SerializeField] private float _delaytime = 2f;
 
-    [Header("플레이어감지")]
+    [Header("플레이어 감지")]
     [SerializeField] private float _detectDistance = 8.0f;
     [SerializeField] private Transform _player;
+    [SerializeField] private float _viewAngle = 90.0f;
+
+    private Vector3 _lastPlayerPosition;
     #endregion
 
     #region 변수
+    private EnemyState _currentState = EnemyState.Patrol; // 초기값
     #endregion
 
 
@@ -43,11 +52,24 @@ public class EnemyPatrol : MonoBehaviour
             return;
         }
 
-        SetRemainDistance();
-        CheckPlayerDistance();
+        switch (_currentState)
+        {
+            case EnemyState.Patrol:
+                SetRemainDistance();
+                CheckPlayerDistance();
+                break;
+            case EnemyState.Chase:
+                ChasePlayer();
+                break;
+            case EnemyState.Search:
+                SearchPlayer();
+                break;
+        }
+
+       
     }
 
-    private void SetRandomDestination()
+    private void SetRandomDestination() // 랜덤좌표로 이동
     {
         Vector3 randomPosition = Random.insideUnitSphere * _patrolRadius;
 
@@ -61,7 +83,7 @@ public class EnemyPatrol : MonoBehaviour
         }
     }
 
-    private void SetRemainDistance()
+    private void SetRemainDistance() // 목적지 도착 후 2초대기 후 다음 목적지로 이동
     {
         if (!_agent.pathPending && _agent.remainingDistance <= 0.5f)
         {
@@ -93,13 +115,72 @@ public class EnemyPatrol : MonoBehaviour
 
     }
 
-    private void CheckPlayerDistance()
+    private void CheckPlayerDistance() // 플레이어 감지
     {
         float distance = Vector3.Distance(transform.position, _player.position);
 
         if (distance <=_detectDistance)
         {
-            Debug.Log("플레이어 발견");
+            Vector3 directionToPlayer = _player.position - transform.position;
+            float angle = Vector3.Angle(transform.forward, directionToPlayer);
+
+            if (angle <= _viewAngle * 0.5f)
+            {
+                RayToPlayer();
+
+            }
+
+        }
+    }
+
+    private void RayToPlayer()
+    {
+        Vector3 origin = transform.position + Vector3.up * 0.7f;
+        Vector3 directionToPlayer = (_player.position - origin).normalized;
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(origin, directionToPlayer, out hit, _detectDistance))
+        {
+            if (hit.transform == _player)
+            {
+                Debug.Log("플레이어 발견");
+                _currentState = EnemyState.Chase;
+            }
+        }
+
+        Debug.DrawRay(origin, directionToPlayer * _detectDistance, Color.green);
+    }
+
+    private void ChasePlayer() // 플레이어 추적
+    {
+        _agent.SetDestination(_player.position);
+
+        float distance = Vector3.Distance(transform.position,_player.position);
+
+        if (distance > _detectDistance)
+        { 
+            _lastPlayerPosition = _player.position;
+            _currentState = EnemyState.Search;
+
+            Debug.Log("플레이어를 놓쳤다");
+        }
+    }
+
+    private void SearchPlayer()
+    {
+        _agent.SetDestination(_lastPlayerPosition);
+
+        CheckPlayerDistance();
+
+        if (!_agent.pathPending && _agent.remainingDistance <= 0.5f)
+        {
+            if (DelayTime())
+            {
+                _currentState = EnemyState.Patrol;
+
+                SetRandomDestination();
+            }
         }
     }
 }
