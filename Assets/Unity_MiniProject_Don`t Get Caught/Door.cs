@@ -25,24 +25,26 @@ public class Door : MonoBehaviour, IInteractable
         _navMeshLink.enabled = false;
     }
 
-
     public void Interact()
     {
         Debug.Log("문과 상호작용 성공!");
-
-        Vector3 isOpen = new Vector3(0f, 90f, 0f);
-        Vector3 isClose = new Vector3(0f, -90f, 0f);
 
         if (_isLocked  && !_inventory.HasKey())
         {
             Debug.Log("문이 잠겨있다.");
             return;
         }
-        
+
+        if (_isLocked && _inventory.HasKey())
+        {
+            _inventory.UseKey();
+            _isLocked = false;
+        }
+
         if (!_isOpen)
         {
             transform.localRotation = _openRotation;
-            _navMeshLink.enabled = true;
+            _navMeshLink.enabled = true;          
         }
 
         else
@@ -51,7 +53,27 @@ public class Door : MonoBehaviour, IInteractable
             _navMeshLink.enabled = false;
         }
 
-        _isOpen = !_isOpen;
-            
+        _isOpen = !_isOpen;         
+    }
+
+    public void CloseDoor()
+    {
+        if (_isOpen)
+        {
+            transform.localRotation = _closeRotation;
+            _navMeshLink.enabled = false;
+
+            _isOpen = false;
+        }
+    }
+
+    public void LockDoor()
+    {
+        _isLocked = true;
+    }
+
+    public void UnlockDoor()
+    {
+        _isLocked = false;
     }
 }
