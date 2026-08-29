@@ -3,6 +3,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     private bool _isPowerRestored;
+    private bool _isGameOver;
 
     public void RestorePower()
     {
@@ -13,4 +14,15 @@ public class GameManager : MonoBehaviour
     {
         return _isPowerRestored;
     }
+
+    public void GameOver()
+    {
+        _isGameOver = true;
+    }
+
+    public bool IsGameOver()
+    {
+        return _isGameOver;
+    }
+
 }

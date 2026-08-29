@@ -21,6 +21,9 @@ public class PlayerController : MonoBehaviour
     [Header("물건 감지")]
     [SerializeField] private float _interactionDistance = 3.0f;
     [SerializeField] private LayerMask _interactableLayer;
+
+    [Header("게임 매니저")]
+    [SerializeField] private GameManager _gameManager;
     #endregion
 
     #region 변수
@@ -41,6 +44,11 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
+        if (_gameManager.IsGameOver())
+        {
+            return;
+        }
+
         Move();
         Look();
         Gravity();

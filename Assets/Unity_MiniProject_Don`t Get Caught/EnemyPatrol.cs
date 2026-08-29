@@ -25,11 +25,14 @@ public class EnemyPatrol : MonoBehaviour
     [SerializeField] private Transform _player;
     [SerializeField] private float _viewAngle = 90.0f;
 
-    private Vector3 _lastPlayerPosition;
+    [Header("게임 매니저")]
+    [SerializeField] private GameManager _gameManager;    
     #endregion
 
     #region 변수
     private EnemyState _currentState = EnemyState.Patrol; // 초기값
+
+    private Vector3 _lastPlayerPosition;
     #endregion
 
 
@@ -47,6 +50,11 @@ public class EnemyPatrol : MonoBehaviour
 
     private void Update()
     {
+        if (_gameManager.IsGameOver())
+        {
+            return;
+        }
+
         if (!_agent.isOnNavMesh)
         {
             return;
@@ -136,12 +144,14 @@ public class EnemyPatrol : MonoBehaviour
     private void RayToPlayer()
     {
         Vector3 origin = transform.position + Vector3.up * 0.7f;
-        Vector3 directionToPlayer = (_player.position - origin).normalized;
+        Vector3 playerTarget = _player.position + Vector3.up * 1.0f;
+        Vector3 directionToPlayer = (playerTarget - origin).normalized;
 
         RaycastHit hit;
 
         if (Physics.Raycast(origin, directionToPlayer, out hit, _detectDistance))
         {
+
             if (hit.transform == _player)
             {
                 Debug.Log("플레이어 발견");
@@ -159,7 +169,7 @@ public class EnemyPatrol : MonoBehaviour
         float distance = Vector3.Distance(transform.position,_player.position);
 
         if (distance > _detectDistance)
-        { 
+        {
             _lastPlayerPosition = _player.position;
             _currentState = EnemyState.Search;
 
