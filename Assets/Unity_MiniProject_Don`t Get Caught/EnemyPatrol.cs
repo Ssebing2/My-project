@@ -50,7 +50,7 @@ public class EnemyPatrol : MonoBehaviour
 
     private void Update()
     {
-        if (_gameManager.IsGameOver())
+        if (_gameManager.IsGameOver() || _gameManager.IsGameClear())
         {
             return;
         }

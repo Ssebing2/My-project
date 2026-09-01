@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/0820/GameScene.unity
     guid: 1599bab70efc28d478921fd47c6e8443
   - enabled: 1
-    path: Assets/Scenes/MiniProject_Don`t Get Caught/0824.unity
+    path: Assets/Scenes/MiniProject_Don`t Get Caught/GameScene.unity
     guid: ad03ea2b71d28ce4f8710a38e327a144
+  - enabled: 1
+    path: Assets/Scenes/MiniProject_Don`t Get Caught/MainMenu.unity
+    guid: 6e2f92b3bcf726544986bd93a8e16164
   m_configObjects: {}

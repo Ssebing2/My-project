@@ -14,6 +14,7 @@ public class GameClearTrigger : MonoBehaviour
         {
             if (!_isTrigger && _gameManager.IsPowerRestored())
             {
+                _gameManager.GameClear();
                 Debug.Log("GAME CLEAR");
                 _isTrigger = true;
             }
