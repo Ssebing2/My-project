@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -25,8 +23,31 @@ public class EnemyPatrol : MonoBehaviour
     [SerializeField] private Transform _player;
     [SerializeField] private float _viewAngle = 90.0f;
 
+    [Header("이동 속도")]
+    [SerializeField] private float _patrolSpeed = 2.0f;
+    [SerializeField] private float _chaseSpeed = 4.0f;
+
     [Header("게임 매니저")]
-    [SerializeField] private GameManager _gameManager;    
+    [SerializeField] private GameManager _gameManager;
+
+    [Header("발소리")]
+    [SerializeField] private AudioSource _footstepAudioSource;
+    [SerializeField] private AudioClip[] _footstepClips;
+
+    [Header("좀비 울음소리")]
+    [SerializeField] private AudioSource _voiceAudioSource;
+    [SerializeField] private AudioClip[] _patrolVoiceClips;
+    [SerializeField] private float _voiceMinDelay = 6.0f;
+    [SerializeField] private float _voiceMaxDelay = 15.0f;
+
+    [Header("좀비 포효소리")]
+    [SerializeField] private AudioSource _roarAudioSource;
+    [SerializeField] private AudioClip _chaseroarClip;
+
+
+
+
+
     #endregion
 
     #region 변수
@@ -37,15 +58,20 @@ public class EnemyPatrol : MonoBehaviour
 
 
     private NavMeshAgent _agent;    // 실제 Enemy를 움직임
+    private Animator _animator; // Enemy 동작
+    private float _voiceTimer;
+    private float _nextVoiceTime;
 
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
+        _animator = GetComponent<Animator>();
     }
 
     private void Start()
     {
         SetRandomDestination();
+        SetNextVoiceTime();
     }
 
     private void Update()
@@ -59,6 +85,8 @@ public class EnemyPatrol : MonoBehaviour
         {
             return;
         }
+
+        _animator.SetFloat("Speed", _agent.velocity.magnitude);
 
         switch (_currentState)
         {
@@ -74,7 +102,8 @@ public class EnemyPatrol : MonoBehaviour
                 break;
         }
 
-       
+        UpdateVoice();
+
     }
 
     private void SetRandomDestination() // 랜덤좌표로 이동
@@ -88,11 +117,17 @@ public class EnemyPatrol : MonoBehaviour
         if (NavMesh.SamplePosition(randomPosition, out hit, 2.0f, NavMesh.AllAreas))
         {
             _agent.SetDestination(hit.position);
+
+            bool walkVariant = Random.value > 0.5f;
+            _animator.SetBool("WalkVariant", walkVariant);
         }
     }
 
     private void SetRemainDistance() // 목적지 도착 후 2초대기 후 다음 목적지로 이동
     {
+        _animator.SetBool("IsChasing", false);
+        _agent.speed = _patrolSpeed;
+
         if (!_agent.pathPending && _agent.remainingDistance <= 0.5f)
         {
             if (DelayTime())
@@ -155,6 +190,7 @@ public class EnemyPatrol : MonoBehaviour
             if (hit.transform == _player)
             {
                 Debug.Log("플레이어 발견");
+                _roarAudioSource.PlayOneShot(_chaseroarClip);
                 _currentState = EnemyState.Chase;
             }
         }
@@ -164,6 +200,8 @@ public class EnemyPatrol : MonoBehaviour
 
     private void ChasePlayer() // 플레이어 추적
     {
+        _animator.SetBool("IsChasing", true);
+        _agent.speed = _chaseSpeed;
         _agent.SetDestination(_player.position);
 
         float distance = Vector3.Distance(transform.position,_player.position);
@@ -179,6 +217,9 @@ public class EnemyPatrol : MonoBehaviour
 
     private void SearchPlayer()
     {
+        _animator.SetBool("IsChasing", false);
+        _agent.speed = _patrolSpeed;
+
         _agent.SetDestination(_lastPlayerPosition);
 
         CheckPlayerDistance();
@@ -191,6 +232,44 @@ public class EnemyPatrol : MonoBehaviour
 
                 SetRandomDestination();
             }
+        }
+    }
+
+    public void PlayFootstep()
+    {
+        int randomIndex = Random.Range(0, _footstepClips.Length);
+
+        _footstepAudioSource.PlayOneShot(_footstepClips[randomIndex]);
+    }
+
+    public void StopEnemy()
+    {
+        _agent.isStopped = true;
+        _animator.speed = 0f;
+        _footstepAudioSource.Stop();
+        _voiceAudioSource.Stop();
+        _roarAudioSource.Stop();
+    }
+
+    private void SetNextVoiceTime()
+    {
+        _nextVoiceTime = Random.Range(_voiceMinDelay, _voiceMaxDelay);
+       
+    }
+
+    private void UpdateVoice()
+    {
+        _voiceTimer += Time.deltaTime;
+
+        if (_voiceTimer >= _nextVoiceTime)
+        {
+            int randomIndex = Random.Range(0, _patrolVoiceClips.Length);
+
+            _voiceAudioSource.PlayOneShot(_patrolVoiceClips[randomIndex]);
+
+            _voiceTimer = 0f;
+
+            SetNextVoiceTime();
         }
     }
 }

@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _gameClearMainMenuButton;
     [SerializeField] private GameObject _gameClearPanel;
 
+    [Header("Enemy")]
+    [SerializeField] private EnemyPatrol _enemy;
+
     private bool _isPowerRestored;
     private bool _isGameOver;
     private bool _isGameClear;
@@ -48,6 +51,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        _enemy.StopEnemy();
+
         _isGameOver = true;
 
         _gameClearPanel.SetActive(false);
@@ -68,6 +73,8 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
+
+        _enemy.StopEnemy();
 
         _isGameClear = true;
 
