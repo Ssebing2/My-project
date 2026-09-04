@@ -54,13 +54,15 @@ public class EnemyPatrol : MonoBehaviour
     private EnemyState _currentState = EnemyState.Patrol; // 초기값
 
     private Vector3 _lastPlayerPosition;
-    #endregion
-
 
     private NavMeshAgent _agent;    // 실제 Enemy를 움직임
     private Animator _animator; // Enemy 동작
     private float _voiceTimer;
     private float _nextVoiceTime;
+    #endregion
+
+
+
 
     private void Awake()
     {
