@@ -16,7 +16,7 @@ public class ElectricalPanel : MonoBehaviour, IInteractable
     private void Start()
     {
         _closedRotation = _panelDoorPivot.localRotation;
-        _openedRotation = _closedRotation * Quaternion.Euler(0f, 90f, 0f);
+        _openedRotation = _closedRotation * Quaternion.Euler(0f, 120f, 0f);
     }
 
     public void Interact()

@@ -2,36 +2,42 @@ using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
-    [SerializeField] private bool _hasKey;
-    [SerializeField] private bool _hasFuse;
+    [SerializeField] private int _keyCount;
+    [SerializeField] private int _fuseCount;
 
     public void GetKey()
     {
-        _hasKey = true;
+        _keyCount++;
     }
 
     public bool HasKey()
     {
-        return _hasKey;
+        return _keyCount > 0;
     }
 
     public void UseKey()
     {
-        _hasKey = false;
+        if (_keyCount > 0)
+        {
+            _keyCount--;
+        }
     }
 
     public void GetFuse()
     {
-        _hasFuse = true;
+        _fuseCount++;
     }
 
     public bool HasFuse()
     {
-        return _hasFuse;
+        return _fuseCount > 0;
     }
 
     public void UseFuse()
     {
-        _hasFuse = false;
+        if (_fuseCount > 0)
+        {
+            _fuseCount--;
+        }
     }
 }

@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     [Header("물건 감지")]
     [SerializeField] private float _interactionDistance = 3.0f;
     [SerializeField] private LayerMask _interactableLayer;
+    [SerializeField] private float _interactionRadius = 0.3f;
 
     [Header("게임 매니저")]
     [SerializeField] private GameManager _gameManager;
@@ -30,6 +31,7 @@ public class PlayerController : MonoBehaviour
     private CharacterController _controller;
     private float _xRotation;
     private float _verticalVelocity; // 현재 위아래방향 움직임
+    private InteractableOutline _currentOutline; // out라인 표시
     #endregion
 
     private void Awake()
@@ -121,8 +123,25 @@ public class PlayerController : MonoBehaviour
 
         RaycastHit hit;
 
-        if (Physics.Raycast(origin, directionToObject, out hit, _interactionDistance, _interactableLayer))
+        if (Physics.SphereCast(origin, _interactionRadius, directionToObject, out hit, _interactionDistance, _interactableLayer))
         {
+            InteractableOutline outline = hit.transform.GetComponentInParent<InteractableOutline>();
+
+            if (outline != _currentOutline)
+            {
+                if (_currentOutline != null)
+                {
+                    _currentOutline.HideOutline();
+                }
+
+                _currentOutline = outline;
+
+                if (_currentOutline != null)
+                {
+                    _currentOutline.ShowOutline();
+                }
+            }
+
             if (Input.GetKeyDown(KeyCode.E))
             {
                 Debug.Log(hit.transform.name);
@@ -137,7 +156,16 @@ public class PlayerController : MonoBehaviour
             }                                   
         }
 
-        Debug.DrawRay(origin, directionToObject * _interactionDistance, Color.green);
+        else
+        {
+            if (_currentOutline != null)
+            {
+                _currentOutline.HideOutline();
+                _currentOutline = null;
+            }
+        }
+
+            Debug.DrawRay(origin, directionToObject * _interactionDistance, Color.green);
   
     }
 

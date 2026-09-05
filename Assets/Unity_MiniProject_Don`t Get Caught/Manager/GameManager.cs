@@ -21,6 +21,10 @@ public class GameManager : MonoBehaviour
     [Header("Enemy")]
     [SerializeField] private EnemyPatrol _enemy;
 
+    [Header("복구 배전함 수")]
+    [SerializeField] private int _requiredPanelCount = 3;
+
+    private int _restoredPanelCount; // 현재 배전함 복구 수
     private bool _isPowerRestored;
     private bool _isGameOver;
     private bool _isGameClear;
@@ -36,7 +40,15 @@ public class GameManager : MonoBehaviour
 
     public void RestorePower()
     {
-        _isPowerRestored = true;
+        _restoredPanelCount++;
+
+        Debug.Log($"배전함 복구 수 : {_restoredPanelCount} / {_requiredPanelCount}");
+
+        if (_restoredPanelCount >= _requiredPanelCount)
+        {
+            Debug.Log("모든 배전함 복구 완료");
+            _isPowerRestored = true;
+        }
     }
 
     public bool IsPowerRestored()
