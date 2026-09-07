@@ -1,124 +1,103 @@
 # Don't Get Caught
 
-> Enemy의 추격을 피해 아이템을 획득하고 탈출하는 1인칭 공포 게임
+> 폐건물을 탐색하며 전력을 복구하고 Enemy를 피해 탈출하는 1인칭 공포 추격 게임
 
 ## 🎮 프로젝트 소개
 
-**Don't Get Caught**는 폐쇄된 공간을 탐색하며  
-플레이어를 감지하고 추격하는 Enemy를 피해 탈출하는 1인칭 공포 게임입니다.
-
-- 장르 : 1인칭 공포 / 추격 / 탈출
+- 장르 : 1인칭 공포 / 추격
 - 플랫폼 : PC
 - 개발 엔진 : Unity
 - 개발 언어 : C#
-- 개발 기간 : 15일
-- 개발 형태 : 개인 프로젝트
+- 개발 형태 : 개인 미니프로젝트
 
 ---
 
-## 🔥 주요 기능
+## 🕹️ 게임 플레이
 
-### 👻 Enemy AI
+플레이어는 폐건물을 탐색하며 Key와 Fuse를 획득하고,
+총 3개의 배전함을 복구하여 탈출해야 합니다.
 
-- NavMeshAgent 기반 랜덤 순찰
-- Patrol / Chase / Search 상태 관리
-- 거리 + 시야각 + Raycast를 이용한 Player 감지
-- Player 마지막 위치 탐색
-- NavMeshLink를 이용한 문 통과
-
-### 🎮 Player
-
-- CharacterController 기반 이동
-- 마우스 시점 회전
-- Shift 달리기
-- 카메라 Raycast 기반 상호작용
-
-### 🖐️ Interaction
-
-- `IInteractable`을 이용한 공통 상호작용 구조
-- E키를 통한 오브젝트 상호작용
-- 문 열기 / 닫기
-- 아이템 획득
-- 일반 문 / 잠긴 문 구분
-- 열쇠 보유 여부에 따른 문 잠금 해제
-
-### 🎒 Inventory
-
-- PlayerInventory를 통한 아이템 상태 관리
-- 열쇠 획득 및 보유 여부 확인
-
----
-
-## 🧩 주요 시스템 구조
+Enemy는 건물 내부를 순찰하며,
+플레이어를 발견하면 추격하고 시야에서 놓치면 마지막 위치를 탐색합니다.
 
 ```text
-Player
- └─ Raycast
-      ↓
- IInteractable
-   ├─ Door
-   │    └─ Open / Close
-   │
-   └─ Item
-        └─ PlayerInventory
-                ↓
-              HasKey
-                ↓
-           Locked Door
+탐색
+ ↓
+Key / Fuse 획득
+ ↓
+Enemy 이벤트
+ ↓
+배전함 3개 복구
+ ↓
+탈출
+ ↓
+Game Clear
 ```
+⚙️ 주요 구현 기능
+Player
+CharacterController 기반 1인칭 이동
+걷기 / 달리기
+마우스 시점 조작
+손전등
+Animation Event 기반 발소리
+Enemy AI
+NavMeshAgent 기반 이동
+Patrol / Chase / Search 상태 머신
+거리 + 시야각 + Raycast 기반 플레이어 감지
+마지막 목격 위치 탐색
+Interaction
+IInteractable 기반 공통 상호작용
+SphereCast 기반 오브젝트 감지
+상호작용 가능 오브젝트 Outline
+Door / Key / Fuse / ElectricalPanel 상호작용
+Game System
+Key / Fuse Inventory
+잠금 Door 시스템
+3개의 배전함 복구 시스템
+GameOver / GameClear
+이벤트 Trigger
+UI / Settings
+Main Menu
+Pause / Resume
+BGM ON / OFF
+Mouse Sensitivity
+Custom Slider
+GameOver / GameClear UI
+Audio
+Player / Enemy 발소리
+Enemy 추격 및 심장박동
+Door / Item / Fuse 사운드
+Main Menu / InGame BGM
+UI Hover / Click 사운드
+🛠️ 사용 기술
 
----
+Unity C# NavMesh NavMeshAgent
+CharacterController Raycast SphereCast
+Animator Animation Event VideoPlayer
+AudioSource RenderTexture Unity UI
 
-## 🛠️ 사용 기술
+🔧 주요 트러블슈팅
+Enemy Raycast가 Floor를 감지하던 문제 해결
+Map MeshCollider로 인해 문을 통과하지 못하던 문제 해결
+GameOver / GameClear 이후 Animation Event 사운드가 계속 재생되던 문제 해결
+VideoPlayer와 Time.timeScale 충돌 문제 해결
+Custom Slider Fill 위치 문제 해결
+UI Event 중복으로 사운드가 중복 재생되던 문제 해결
+📌 개발 현황
+ Player Controller
+ Enemy AI
+ Interaction System
+ Inventory
+ Electrical Panel Puzzle
+ GameOver / GameClear
+ Main Menu
+ Pause / Settings
+ Audio System
+ Lighting Polish
+ Horror Event Polish
+ Final Play Test
+📚 프로젝트를 통해 배운 점
 
-`Unity` `C#` `NavMesh` `NavMeshAgent` `NavMeshLink`  
-`Raycast` `CharacterController` `Interface` `Enum`
-
----
-
-## 📌 개발 진행 상황
-
-- [x] Player 이동 / 시점 / 달리기
-- [x] Enemy 랜덤 순찰
-- [x] Enemy Patrol / Chase / Search
-- [x] 거리 / 시야각 / Raycast 감지
-- [x] 문 상호작용
-- [x] 아이템 상호작용
-- [x] 열쇠 / 잠긴 문 시스템
-- [ ] 맵 Collider 폴리싱
-- [ ] Enemy Animation
-- [ ] Sound / Lighting
-- [ ] 게임 진행 및 엔딩 연출
-
----
-
-## 📅 Development Log
-
-### Day 1
-- 맵 및 NavMesh 환경 구성
-- Enemy 랜덤 순찰 구현
-
-### Day 2
-- Enemy 상태 시스템 구현
-- Patrol / Chase / Search 구현
-- Player 감지 시스템 구현
-
-### Day 3
-- Player 달리기 구현
-- NavMeshLink를 활용한 Enemy 문 통과 구현
-
-### Day 4
-- `IInteractable` 기반 상호작용 시스템 구현
-- 문 열기 / 닫기 구현
-- 아이템 획득 구현
-- PlayerInventory 구현
-- 열쇠 / 잠긴 문 시스템 구현
-
----
-
-## 🚧 개발 중
-
-현재 개발 중인 프로젝트입니다.
-
-핵심 게임 기능을 우선 구현한 뒤  
-맵 Collider, Animation, Lighting, Sound 등의 폴리싱을 진행할 예정입니다.
+NavMesh 기반 AI 상태 머신을 직접 구현하고,
+Player, Enemy, Interaction, UI, Audio 등 여러 시스템을 연결하면서
+각 시스템의 상태와 역할을 분리하여 관리하는 방법을 학습했습니다.
