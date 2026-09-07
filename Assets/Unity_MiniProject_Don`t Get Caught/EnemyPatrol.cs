@@ -44,10 +44,6 @@ public class EnemyPatrol : MonoBehaviour
     [SerializeField] private AudioSource _roarAudioSource;
     [SerializeField] private AudioClip _chaseroarClip;
 
-
-
-
-
     #endregion
 
     #region 변수
@@ -193,6 +189,10 @@ public class EnemyPatrol : MonoBehaviour
             {
                 Debug.Log("플레이어 발견");
                 _roarAudioSource.PlayOneShot(_chaseroarClip);
+
+                PlayerController playerController = _player.GetComponent<PlayerController>();
+
+                playerController.StartHeartbeat();
                 _currentState = EnemyState.Chase;
             }
         }
@@ -211,6 +211,10 @@ public class EnemyPatrol : MonoBehaviour
         if (distance > _detectDistance)
         {
             _lastPlayerPosition = _player.position;
+
+            PlayerController playerController = _player.GetComponent<PlayerController>();
+
+            playerController.StopHeartbeat();
             _currentState = EnemyState.Search;
 
             Debug.Log("플레이어를 놓쳤다");

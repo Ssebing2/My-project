@@ -9,6 +9,10 @@ public class EventTrigger : MonoBehaviour
     [SerializeField] private AudioSource _zombieVoiceAudioSource;
     [SerializeField] private AudioClip _zombieAppearClip;
 
+    [Header("이벤트 사운드")]
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip _closeDoorEventClip;
+
     private bool _isTrigger;
 
     private void OnTriggerEnter(Collider other)
@@ -26,6 +30,7 @@ public class EventTrigger : MonoBehaviour
                 _door.LockDoor();
 
                 _zombieVoiceAudioSource.PlayOneShot(_zombieAppearClip);
+                _audioSource.PlayOneShot( _closeDoorEventClip);
 
                 _isTrigger = true;
             }

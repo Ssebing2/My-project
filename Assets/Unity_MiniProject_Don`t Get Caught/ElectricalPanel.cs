@@ -10,6 +10,10 @@ public class ElectricalPanel : MonoBehaviour, IInteractable
     [SerializeField] private bool _isOpen;
     [SerializeField] private bool _isFuseInstalled;
 
+    [Header("사운드")]
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip _fuseInsertClip;
+
     private Quaternion _closedRotation;
     private Quaternion _openedRotation;
 
@@ -37,6 +41,8 @@ public class ElectricalPanel : MonoBehaviour, IInteractable
             _installedFuse.SetActive(true);     // 배전함에 Fuse 넣기
             _isFuseInstalled = true;            // Fuse 설치완료
             _door.UnlockDoor();                 // 방 문 잠금해제
+
+            _audioSource.PlayOneShot(_fuseInsertClip); // 퓨즈 장착음
 
             _gameManager.RestorePower();        // 전력 복구 상태 저장
         }       

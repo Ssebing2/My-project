@@ -7,6 +7,12 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private PlayerInventory _inventory;
     [SerializeField] private bool _isLocked;
 
+    [Header("문 사운드")]
+    [SerializeField] private AudioSource _doorAudioSource;
+    [SerializeField] private AudioClip _openClip;
+    [SerializeField] private AudioClip _closeClip;
+    [SerializeField] private AudioClip _lockClip;
+
     private bool _isOpen;
     private Quaternion _closeRotation;
     private Quaternion _openRotation;
@@ -32,25 +38,31 @@ public class Door : MonoBehaviour, IInteractable
         if (_isLocked  && !_inventory.HasKey())
         {
             Debug.Log("문이 잠겨있다.");
+
+            _doorAudioSource.PlayOneShot(_lockClip);
             return;
         }
 
         if (_isLocked && _inventory.HasKey())
         {
             _inventory.UseKey();
-            _isLocked = false;
+            _isLocked = false;        
         }
 
         if (!_isOpen)
         {
             transform.localRotation = _openRotation;
-            _navMeshLink.enabled = true;          
+            _navMeshLink.enabled = true;
+
+            _doorAudioSource.PlayOneShot(_openClip);
         }
 
         else
         {
             transform.localRotation = _closeRotation;
             _navMeshLink.enabled = false;
+
+            _doorAudioSource.PlayOneShot(_closeClip);
         }
 
         _isOpen = !_isOpen;         

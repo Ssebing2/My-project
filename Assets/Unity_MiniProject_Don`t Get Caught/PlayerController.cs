@@ -7,9 +7,9 @@ public class PlayerController : MonoBehaviour
 {
     #region 인스펙터
     [Header("스피드")]
-    [SerializeField] private float _moveSpeed = 5.0f;
-    [SerializeField] private float _rotateSpeed = 20.0f;
-    [SerializeField] private float _runSpeed = 8.0f;
+    [SerializeField] private float _moveSpeed = 4.0f;
+    [SerializeField] private float _mouseSensitivity = 100.0f;
+    [SerializeField] private float _runSpeed = 6.0f;
 
     [Header("카메라")]
     [SerializeField] private Transform _camera;
@@ -25,6 +25,19 @@ public class PlayerController : MonoBehaviour
 
     [Header("게임 매니저")]
     [SerializeField] private GameManager _gameManager;
+
+    [Header("애니메이터")]
+    [SerializeField] private Animator _animator;
+
+    [Header("손전등")]
+    [SerializeField] private Light _flashlight;
+
+    [Header("발소리")]
+    [SerializeField] private AudioSource _footstepAudioSource;
+    [SerializeField] private AudioClip[] _footstepClips;
+
+    [Header("심장박동 소리")]
+    [SerializeField] private AudioSource _heartbeatAudioSource;
     #endregion
 
     #region 변수
@@ -55,6 +68,7 @@ public class PlayerController : MonoBehaviour
         Look();
         Gravity();
         CameraToRay();
+        FlashlightOnOff();
     }
 
     private void LateUpdate()
@@ -69,14 +83,21 @@ public class PlayerController : MonoBehaviour
 
         Vector3 moveDirection = transform.right * horizontal + transform.forward * vertical;
 
+        float moveAmount = new Vector2(horizontal, vertical).magnitude;
+        
+        bool isRunning = Input.GetKey(KeyCode.LeftShift) && moveAmount > 0.1f;
+
         float currentSpeed = _moveSpeed;
 
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (isRunning)
         {
             currentSpeed = _runSpeed;
         }
 
         _controller.Move(moveDirection * currentSpeed * Time.deltaTime);
+
+        _animator.SetFloat("Speed", moveAmount);
+        _animator.SetBool("IsRunning", isRunning);
 
     }
 
@@ -85,8 +106,8 @@ public class PlayerController : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
-        mouseX *= _rotateSpeed * Time.deltaTime;
-        mouseY *= _rotateSpeed * Time.deltaTime;
+        mouseX *= _mouseSensitivity * Time.deltaTime;
+        mouseY *= _mouseSensitivity * Time.deltaTime;
 
         transform.Rotate(Vector3.up * mouseX);
 
@@ -98,7 +119,7 @@ public class PlayerController : MonoBehaviour
 
     private void CameraFollow()
     {
-        _camera.position = transform.position + _cameraOffset;
+        _camera.position = transform.position + _cameraOffset + transform.forward * 0.15f;
     }
 
     private void Gravity() // 중력
@@ -169,4 +190,52 @@ public class PlayerController : MonoBehaviour
   
     }
 
+    private void FlashlightOnOff()
+    {
+        if(Input.GetKeyDown(KeyCode.F))
+        {
+            _flashlight.enabled = !_flashlight.enabled;
+        }
+    }
+
+    public void PlayFootstep1()
+    {
+        _footstepAudioSource.PlayOneShot(_footstepClips[0]);
+    }
+
+    public void PlayFootstep2()
+    {
+        _footstepAudioSource.PlayOneShot(_footstepClips[1]);
+    }
+
+    public void StartHeartbeat()
+    {
+        if (!_heartbeatAudioSource.isPlaying)
+        {
+            _heartbeatAudioSource.Play();
+        }
+    }
+
+    public void StopHeartbeat()
+    {
+        if (_heartbeatAudioSource.isPlaying)
+        {
+            _heartbeatAudioSource.Stop();
+        }
+    }
+
+    public void StopPlayer()
+    {
+        _animator.speed = 0f;
+
+        _footstepAudioSource.Stop();
+        _heartbeatAudioSource.Stop();
+    }
+
+    public void SetMouseSensitivity(float value)
+    {
+        _mouseSensitivity = value;
+
+        Debug.Log($"마우스 감도 변경 : {value}");
+    }
 }

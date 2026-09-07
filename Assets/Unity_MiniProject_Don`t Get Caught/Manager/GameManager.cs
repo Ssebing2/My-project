@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -23,6 +24,21 @@ public class GameManager : MonoBehaviour
 
     [Header("복구 배전함 수")]
     [SerializeField] private int _requiredPanelCount = 3;
+
+    [Header("UI 사운드")]
+    [SerializeField] private AudioSource _uiAudioSource;
+    [SerializeField] private AudioClip _buttonHoverClip;
+    [SerializeField] private AudioClip _buttonClickClip;
+
+    [Header("인게임 BGM")]
+    [SerializeField] private AudioSource _inGameBgmAudioSource;
+
+    [Header("전력 복구 사운드")]
+    [SerializeField] private AudioSource _powerAudioSource;
+    [SerializeField] private AudioClip _powerRestoreClip;
+
+    [Header("Player")]
+    [SerializeField] private PlayerController _player;
 
     private int _restoredPanelCount; // 현재 배전함 복구 수
     private bool _isPowerRestored;
@@ -48,6 +64,8 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("모든 배전함 복구 완료");
             _isPowerRestored = true;
+
+            _powerAudioSource.PlayOneShot(_powerRestoreClip);
         }
     }
 
@@ -66,6 +84,11 @@ public class GameManager : MonoBehaviour
         _enemy.StopEnemy();
 
         _isGameOver = true;
+
+        PlayerController playerController = _player.GetComponent<PlayerController>();
+        playerController.StopPlayer();
+
+        _inGameBgmAudioSource.Stop();
 
         _gameClearPanel.SetActive(false);
         _gameOverPanel.SetActive(true);
@@ -89,6 +112,11 @@ public class GameManager : MonoBehaviour
         _enemy.StopEnemy();
 
         _isGameClear = true;
+
+        PlayerController playerController = _player.GetComponent<PlayerController>();
+        playerController.StopPlayer();
+
+        _inGameBgmAudioSource.Stop();
 
         _gameOverPanel.SetActive(false);
         _gameClearPanel.SetActive(true);
@@ -127,12 +155,40 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
+        StartCoroutine(RestartGameDelay());
+    }
+
+    private IEnumerator RestartGameDelay()
+    {
+        _uiAudioSource.PlayOneShot(_buttonClickClip);
+
+        yield return new WaitForSecondsRealtime(0.2f);
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void GoToMainMenu()
     {
+        StartCoroutine(GoToMainMenuDelay());
+    }
+
+    private IEnumerator GoToMainMenuDelay()
+    {
+        _uiAudioSource.PlayOneShot(_buttonClickClip);
+
+        yield return new WaitForSecondsRealtime(0.2f);
+
         SceneManager.LoadScene("MainMenu");
+    }
+
+    public void PlayButtonHoverSound()
+    {
+        _uiAudioSource.PlayOneShot(_buttonHoverClip);
+    }
+
+    public void PlayButtonClickSound()
+    {
+        _uiAudioSource.PlayOneShot(_buttonClickClip);
     }
 
 }
