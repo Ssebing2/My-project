@@ -28,6 +28,7 @@ public class EventTrigger : MonoBehaviour
                 _enemy.SetActive(true);
                 _door.CloseDoor();
                 _door.LockDoor();
+                _door.DisableKeyUnlock();
 
                 _zombieVoiceAudioSource.PlayOneShot(_zombieAppearClip);
                 _audioSource.PlayOneShot( _closeDoorEventClip);

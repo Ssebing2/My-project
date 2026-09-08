@@ -31,6 +31,8 @@ public class PlayerController : MonoBehaviour
 
     [Header("손전등")]
     [SerializeField] private Light _flashlight;
+    [SerializeField] private AudioSource _flashlightAudioSource;
+    [SerializeField] private AudioClip _flashlightClickClip;
 
     [Header("발소리")]
     [SerializeField] private AudioSource _footstepAudioSource;
@@ -38,6 +40,11 @@ public class PlayerController : MonoBehaviour
 
     [Header("심장박동 소리")]
     [SerializeField] private AudioSource _heartbeatAudioSource;
+
+    [Header("상호작용 UI")]
+    [SerializeField] private GameObject _interactText;
+    [SerializeField] private Vector2 _interactTextOffset = new Vector2(50f, 0f);
+
     #endregion
 
     #region 변수
@@ -146,6 +153,12 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.SphereCast(origin, _interactionRadius, directionToObject, out hit, _interactionDistance, _interactableLayer))
         {
+            Vector3 screenPosition = Camera.main.WorldToScreenPoint(hit.transform.position);
+
+            _interactText.transform.position = screenPosition + (Vector3)_interactTextOffset;
+
+            _interactText.SetActive(true);
+
             InteractableOutline outline = hit.transform.GetComponentInParent<InteractableOutline>();
 
             if (outline != _currentOutline)
@@ -179,6 +192,8 @@ public class PlayerController : MonoBehaviour
 
         else
         {
+            _interactText.SetActive(false);
+
             if (_currentOutline != null)
             {
                 _currentOutline.HideOutline();
@@ -195,6 +210,8 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.F))
         {
             _flashlight.enabled = !_flashlight.enabled;
+
+            _flashlightAudioSource.PlayOneShot(_flashlightClickClip);
         }
     }
 

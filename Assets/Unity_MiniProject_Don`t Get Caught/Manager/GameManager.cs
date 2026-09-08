@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -40,6 +41,12 @@ public class GameManager : MonoBehaviour
     [Header("Player")]
     [SerializeField] private PlayerController _player;
 
+    [Header("배전함 복구 UI")]
+    [SerializeField] private TMP_Text _powerCountText;
+
+    [Header("배전함 복구 표시")]
+    [SerializeField] private GameObject[] _powerLights;
+
     private int _restoredPanelCount; // 현재 배전함 복구 수
     private bool _isPowerRestored;
     private bool _isGameOver;
@@ -52,13 +59,22 @@ public class GameManager : MonoBehaviour
 
         _gameOverVideoPlayer.loopPointReached += OnGameOverVideoFinished;
         _gameClearVideoPlayer.loopPointReached += OnGameClearVideoFinished;
+
+        _powerCountText.text = $"{_restoredPanelCount}          {_requiredPanelCount}";
     }
 
     public void RestorePower()
     {
         _restoredPanelCount++;
 
+        _powerCountText.text = $"{_restoredPanelCount}          {_requiredPanelCount}";
+
         Debug.Log($"배전함 복구 수 : {_restoredPanelCount} / {_requiredPanelCount}");
+
+        if (_restoredPanelCount <= _powerLights.Length)
+        {
+            _powerLights[_restoredPanelCount - 1].SetActive(true);
+        }
 
         if (_restoredPanelCount >= _requiredPanelCount)
         {

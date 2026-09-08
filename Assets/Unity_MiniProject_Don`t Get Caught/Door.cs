@@ -6,6 +6,7 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private NavMeshLink _navMeshLink;
     [SerializeField] private PlayerInventory _inventory;
     [SerializeField] private bool _isLocked;
+    [SerializeField] private bool _canUnlockWithKey = true;
 
     [Header("문 사운드")]
     [SerializeField] private AudioSource _doorAudioSource;
@@ -34,6 +35,13 @@ public class Door : MonoBehaviour, IInteractable
     public void Interact()
     {
         Debug.Log("문과 상호작용 성공!");
+
+        if (_isLocked && !_canUnlockWithKey)
+        {
+            Debug.Log("이 문은 열쇠로 열 수 없다.");
+            _doorAudioSource.PlayOneShot(_lockClip);
+            return;
+        }
 
         if (_isLocked  && !_inventory.HasKey())
         {
@@ -87,5 +95,10 @@ public class Door : MonoBehaviour, IInteractable
     public void UnlockDoor()
     {
         _isLocked = false;
+    }
+
+    public void DisableKeyUnlock()
+    {
+        _canUnlockWithKey = false;
     }
 }
