@@ -17,6 +17,7 @@ public class PauseMenu : MonoBehaviour
     [Header("¹öÆ° È£¹ö ¿¬Ãâ")]
     [SerializeField] private Image _settingButtonImage;
     [SerializeField] private Image _mainMenuButtonImage;
+    [SerializeField] private Image _howToPlayButtonImage;
 
     [Header("ÀÎ°ÔÀÓ ¿Àµð¿À¼Ò½º")]
     [SerializeField] private AudioSource _inGameBgmAudioSource;
@@ -26,6 +27,9 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private AudioSource _uiAudioSource;
     [SerializeField] private AudioClip _buttonHoverClip;
     [SerializeField] private AudioClip _buttonClickClip;
+
+    [Header("HOW TO PLAY")]
+    [SerializeField] private GameObject _howToPlayPanel;
 
     private bool _isPaused;
 
@@ -107,6 +111,22 @@ public class PauseMenu : MonoBehaviour
         _pausePanel.SetActive(true);
     }
 
+    public void OpenHowToPlay()
+    {
+        _uiAudioSource.PlayOneShot(_buttonClickClip);
+
+        _pausePanel.SetActive(false);
+        _howToPlayPanel.SetActive(true);
+    }
+
+    public void CloseHowToPlay()
+    {
+        _uiAudioSource.PlayOneShot(_buttonClickClip);
+
+        _howToPlayPanel.SetActive(false);
+        _pausePanel.SetActive(true);
+    }
+
     public void BGMOn()
     {
         _isBgmOn = true;
@@ -161,10 +181,15 @@ public class PauseMenu : MonoBehaviour
 
     public void SettingHoverEnter()
     {
-        // MAIN MENU¸¸ »ìÂ¦ ¾îµÓ°Ô
+        // MAIN MENU »ìÂ¦ ¾îµÓ°Ô
         Color color = _mainMenuButtonImage.color;
         color.a = 0.35f;
         _mainMenuButtonImage.color = color;
+
+        // HOW TO PLAY »ìÂ¦ ¾îµÓ°Ô
+        Color color2 = _howToPlayButtonImage.color;
+        color2.a = 0.35f;
+        _howToPlayButtonImage.color = color2;
     }
 
     public void SettingHoverExit()
@@ -172,6 +197,10 @@ public class PauseMenu : MonoBehaviour
         Color color = _mainMenuButtonImage.color;
         color.a = 35f;
         _mainMenuButtonImage.color = color;
+
+        Color color2 = _howToPlayButtonImage.color;
+        color2.a = 35f;
+        _howToPlayButtonImage.color = color2;
     }
 
     public void MainMenuHoverEnter()
@@ -180,6 +209,11 @@ public class PauseMenu : MonoBehaviour
         Color color = _settingButtonImage.color;
         color.a = 0.35f;
         _settingButtonImage.color = color;
+
+        // HOW TO PLAY »ìÂ¦ ¾îµÓ°Ô
+        Color color2 = _howToPlayButtonImage.color;
+        color2.a = 0.35f;
+        _howToPlayButtonImage.color = color2;
     }
 
     public void MainMenuHoverExit()
@@ -187,5 +221,35 @@ public class PauseMenu : MonoBehaviour
         Color color = _settingButtonImage.color;
         color.a = 35f;
         _settingButtonImage.color = color;
+
+        Color color2 = _howToPlayButtonImage.color;
+        color2.a = 35f;
+        _howToPlayButtonImage.color = color2;
     }
+
+    public void HowToPlayHoverEnter()
+    {
+        // SETTINGS¸¸ »ìÂ¦ ¾îµÓ°Ô
+        Color color = _settingButtonImage.color;
+        color.a = 0.35f;
+        _settingButtonImage.color = color;
+
+        // HOW TO PLAY »ìÂ¦ ¾îµÓ°Ô
+        Color color2 = _mainMenuButtonImage.color;
+        color2.a = 0.35f;
+        _mainMenuButtonImage.color = color2;
+    }
+
+    public void HowToPlayHoverExit()
+    {
+        Color color = _settingButtonImage.color;
+        color.a = 35f;
+        _settingButtonImage.color = color;
+
+        Color color2 = _mainMenuButtonImage.color;
+        color2.a = 35f;
+        _mainMenuButtonImage.color = color2;
+    }
+
+
 }

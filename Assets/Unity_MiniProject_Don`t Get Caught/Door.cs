@@ -101,4 +101,12 @@ public class Door : MonoBehaviour, IInteractable
     {
         _canUnlockWithKey = false;
     }
+
+    public string GetInteractionText()
+    {
+        if (_isOpen)
+            return "[ E ] CLOSE";
+
+        return "[ E ] OPEN";
+    }
 }

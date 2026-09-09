@@ -35,4 +35,18 @@ public class Item : MonoBehaviour, IInteractable
 
         Destroy(gameObject);
     }
+
+    public string GetInteractionText()
+    {
+        switch (_itemType)
+        {
+            case EItemType.Key:
+                return "[ E ] PICK UP KEY";
+
+            case EItemType.Fuse:
+                return "[ E ] PICK UP FUSE";
+        }
+
+        return "[ E ] 상호작용";
+    }
 }

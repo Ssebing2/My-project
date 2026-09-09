@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -42,8 +40,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioSource _heartbeatAudioSource;
 
     [Header("상호작용 UI")]
-    [SerializeField] private GameObject _interactText;
-    [SerializeField] private Vector2 _interactTextOffset = new Vector2(50f, 0f);
+    [SerializeField] private TMP_Text _interactText;
+    [SerializeField] private Vector2 _interactTextOffset = new Vector2(30f, 40f);
 
     #endregion
 
@@ -63,6 +61,7 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
     }
     private void Update()
     {
@@ -119,8 +118,8 @@ public class PlayerController : MonoBehaviour
         transform.Rotate(Vector3.up * mouseX);
 
         _xRotation -= mouseY;
-
         _xRotation = Mathf.Clamp(_xRotation, -80f, 80f);
+
         _camera.localRotation = Quaternion.Euler(_xRotation, transform.eulerAngles.y, 0f);
     }
 
@@ -153,11 +152,31 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.SphereCast(origin, _interactionRadius, directionToObject, out hit, _interactionDistance, _interactableLayer))
         {
-            Vector3 screenPosition = Camera.main.WorldToScreenPoint(hit.transform.position);
+            IInteractable interactable = hit.transform.GetComponentInParent<IInteractable>(); // 부모 Layer에 컴포넌트 연결시켜도 되도록
 
-            _interactText.transform.position = screenPosition + (Vector3)_interactTextOffset;
+            if (interactable != null)
+            {
+                // 오브젝트 위치를 화면 좌표로 변환
+                Vector3 screenPosition = Camera.main.WorldToScreenPoint(hit.transform.position);
 
-            _interactText.SetActive(true);
+                // [E] 문구를 오브젝트 옆으로 이동
+                _interactText.transform.position = screenPosition + (Vector3)_interactTextOffset;
+
+                // 현재 오브젝트에게 어떤 문구를 표시할지 물어봄
+                string interactionText = interactable.GetInteractionText();
+
+                // 문구 적용
+                _interactText.text = interactionText;
+
+                // 표시할 문구가 있으면 활성화
+                _interactText.gameObject.SetActive(!string.IsNullOrEmpty(interactionText));
+            }
+
+            else
+            {
+                _interactText.gameObject.SetActive(false);
+            }
+
 
             InteractableOutline outline = hit.transform.GetComponentInParent<InteractableOutline>();
 
@@ -180,8 +199,6 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log(hit.transform.name);
 
-                IInteractable interactable = hit.transform.GetComponentInParent<IInteractable>(); // 부모 Layer에 컴포넌트 연결시켜도 되도록
-
                 if (interactable != null)
                 {
                     interactable.Interact();
@@ -192,7 +209,7 @@ public class PlayerController : MonoBehaviour
 
         else
         {
-            _interactText.SetActive(false);
+            _interactText.gameObject.SetActive(false);
 
             if (_currentOutline != null)
             {

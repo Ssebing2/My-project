@@ -52,4 +52,15 @@ public class ElectricalPanel : MonoBehaviour, IInteractable
             _gameManager.RestorePower();        // 전력 복구 상태 저장
         }       
     }
+
+    public string GetInteractionText()
+    {
+        if (!_isOpen)
+            return "[ E ] OPEN";
+
+        if (!_isFuseInstalled && _inventory.HasFuse())
+            return "[ E ] INSERT FUSE";
+
+        return "";
+    }
 }
