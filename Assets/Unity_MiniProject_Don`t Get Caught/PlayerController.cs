@@ -43,6 +43,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TMP_Text _interactText;
     [SerializeField] private Vector2 _interactTextOffset = new Vector2(30f, 40f);
 
+    [Header("손전등 안내")]
+    [SerializeField] private GameObject _flashlightGuide;
+
     #endregion
 
     #region 변수
@@ -61,6 +64,8 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        _flashlight.enabled = false;    
 
     }
     private void Update()
@@ -229,6 +234,11 @@ public class PlayerController : MonoBehaviour
             _flashlight.enabled = !_flashlight.enabled;
 
             _flashlightAudioSource.PlayOneShot(_flashlightClickClip);
+
+            if (_flashlight.enabled)
+            {
+                _flashlightGuide.SetActive(false);
+            }
         }
     }
 
@@ -247,6 +257,7 @@ public class PlayerController : MonoBehaviour
         if (!_heartbeatAudioSource.isPlaying)
         {
             _heartbeatAudioSource.Play();
+            _gameManager.LowerBgmVolume();
         }
     }
 
@@ -255,6 +266,7 @@ public class PlayerController : MonoBehaviour
         if (_heartbeatAudioSource.isPlaying)
         {
             _heartbeatAudioSource.Stop();
+            _gameManager.RestoreBgmVolume();
         }
     }
 

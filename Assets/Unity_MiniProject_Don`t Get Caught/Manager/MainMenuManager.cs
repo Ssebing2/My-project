@@ -4,11 +4,14 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
-
     [Header("UI 사운드")]
     [SerializeField] private AudioSource _uiAudioSource;
     [SerializeField] private AudioClip _buttonHoverClip;
     [SerializeField] private AudioClip _buttonClickClip;
+
+    [Header("페이드")]
+    [SerializeField] private CanvasGroup _fadeCanvasGroup;
+    [SerializeField] private float _fadeDuration = 1.0f;
 
     public void StartGame()
     {
@@ -22,6 +25,19 @@ public class MainMenuManager : MonoBehaviour
         _uiAudioSource.PlayOneShot(_buttonClickClip);
 
         yield return new WaitForSecondsRealtime(0.2f);
+
+        float time = 0f;
+
+        while (time < _fadeDuration)
+        {
+            time += Time.unscaledDeltaTime;
+
+            _fadeCanvasGroup.alpha = Mathf.Lerp(0f, 1f, time / _fadeDuration);
+
+            yield return null;
+        }
+
+        _fadeCanvasGroup.alpha = 1f;
 
         SceneManager.LoadScene("GameScene");
     }

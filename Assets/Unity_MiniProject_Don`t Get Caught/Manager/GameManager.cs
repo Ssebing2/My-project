@@ -51,6 +51,8 @@ public class GameManager : MonoBehaviour
     private bool _isPowerRestored;
     private bool _isGameOver;
     private bool _isGameClear;
+    private float _normalBgmVolume = 1.0f;
+    private float _chaseBgmVolume = 0.1f;
 
     private void Start()
     {
@@ -66,6 +68,8 @@ public class GameManager : MonoBehaviour
     public void RestorePower()
     {
         _restoredPanelCount++;
+
+        _enemy.SetPhase(_restoredPanelCount);
 
         _powerCountText.text = $"{_restoredPanelCount}          {_requiredPanelCount}";
 
@@ -105,6 +109,7 @@ public class GameManager : MonoBehaviour
         playerController.StopPlayer();
 
         _inGameBgmAudioSource.Stop();
+        _powerAudioSource.Stop();
 
         _gameClearPanel.SetActive(false);
         _gameOverPanel.SetActive(true);
@@ -133,6 +138,7 @@ public class GameManager : MonoBehaviour
         playerController.StopPlayer();
 
         _inGameBgmAudioSource.Stop();
+        _powerAudioSource.Stop();
 
         _gameOverPanel.SetActive(false);
         _gameClearPanel.SetActive(true);
@@ -205,6 +211,16 @@ public class GameManager : MonoBehaviour
     public void PlayButtonClickSound()
     {
         _uiAudioSource.PlayOneShot(_buttonClickClip);
+    }
+
+    public void LowerBgmVolume()
+    {
+        _inGameBgmAudioSource.volume = _chaseBgmVolume;
+    }
+
+    public void RestoreBgmVolume()
+    {
+        _inGameBgmAudioSource.volume = _normalBgmVolume;
     }
 
 }

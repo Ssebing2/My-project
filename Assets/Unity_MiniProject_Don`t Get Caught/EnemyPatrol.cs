@@ -44,6 +44,9 @@ public class EnemyPatrol : MonoBehaviour
     [SerializeField] private AudioSource _roarAudioSource;
     [SerializeField] private AudioClip _chaseroarClip;
 
+    [Header("페이즈 사운드")]
+    [SerializeField] private AudioClip[] _phaseRoarClips;
+
     #endregion
 
     #region 변수
@@ -104,21 +107,28 @@ public class EnemyPatrol : MonoBehaviour
 
     }
 
-    private void SetRandomDestination() // 랜덤좌표로 이동
+    private void SetRandomDestination() // 랜덤 좌표로 이동.
     {
-        Vector3 randomPosition = Random.insideUnitSphere * _patrolRadius;
-
-        randomPosition += transform.position;
-
-        NavMeshHit hit;
-
-        if (NavMesh.SamplePosition(randomPosition, out hit, 2.0f, NavMesh.AllAreas))
+        for (int i = 0; i < 10; i++)
         {
-            _agent.SetDestination(hit.position);
+            Vector3 randomPosition = Random.insideUnitSphere * _patrolRadius + transform.position;
 
-            bool walkVariant = Random.value > 0.5f;
-            _animator.SetBool("WalkVariant", walkVariant);
+            if (NavMesh.SamplePosition(randomPosition, out NavMeshHit hit, 2.0f, NavMesh.AllAreas))
+            {
+                NavMeshPath path = new NavMeshPath();
+
+                if (NavMesh.CalculatePath( transform.position, hit.position, NavMesh.AllAreas, path))
+                {
+                    if (path.status == NavMeshPathStatus.PathComplete)
+                    {
+                        _agent.SetDestination(hit.position);
+                        return;
+                    }
+                }
+            }
         }
+
+        Debug.Log("이동 가능한 랜덤 목적지를 찾지 못함");
     }
 
     private void SetRemainDistance() // 목적지 도착 후 2초대기 후 다음 목적지로 이동
@@ -245,16 +255,32 @@ public class EnemyPatrol : MonoBehaviour
     {
         int randomIndex = Random.Range(0, _footstepClips.Length);
 
+        Debug.Log("좀비 발소리 1 호출!");
         _footstepAudioSource.PlayOneShot(_footstepClips[randomIndex]);
     }
 
     public void StopEnemy()
     {
-        _agent.isStopped = true;
-        _animator.speed = 0f;
-        _footstepAudioSource.Stop();
-        _voiceAudioSource.Stop();
-        _roarAudioSource.Stop();
+        Debug.Log($"Agent : {_agent}");
+        Debug.Log($"Animator : {_animator}");
+        Debug.Log($"Footstep : {_footstepAudioSource}");
+        Debug.Log($"Voice : {_voiceAudioSource}");
+        Debug.Log($"Roar : {_roarAudioSource}");
+
+        if (_agent != null)
+            _agent.isStopped = true;
+
+        if (_animator != null)
+            _animator.speed = 0f;
+
+        if (_footstepAudioSource != null)
+            _footstepAudioSource.Stop();
+
+        if (_voiceAudioSource != null)
+            _voiceAudioSource.Stop();
+
+        if (_roarAudioSource != null)
+            _roarAudioSource.Stop();
     }
 
     private void SetNextVoiceTime()
@@ -277,5 +303,39 @@ public class EnemyPatrol : MonoBehaviour
 
             SetNextVoiceTime();
         }
+    }
+
+    public void SetPhase(int phase)
+    {
+        switch (phase)
+        {
+            case 1:
+                _patrolSpeed = 2.5f;
+                _chaseSpeed = 4.5f;
+                _detectDistance = 9.0f;
+
+                Debug.Log("Enemy Phase 1");
+                break;
+
+            case 2:
+                _patrolSpeed = 3.0f;
+                _chaseSpeed = 5.5f;
+                _detectDistance = 11.0f;
+
+                Debug.Log("Enemy Phase 2");
+                break;
+
+            case 3:
+                _patrolSpeed = 3.5f;
+                _chaseSpeed = 6.5f;
+                _detectDistance = 13.0f;
+
+                Debug.Log("Enemy Phase 3");
+                break;
+        }
+
+        _roarAudioSource.PlayOneShot(_phaseRoarClips[phase - 1]);
+
+        Debug.Log($"Enemy Phase {phase}");
     }
 }
