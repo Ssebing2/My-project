@@ -1,267 +1,248 @@
 # Don't Get Caught
 
-> 폐건물을 탐색하며 전력을 복구하고 Enemy를 피해 탈출하는 1인칭 공포 추격 게임
+> 어둠 속에서 전력을 복구하고, 좀비를 피해 탈출하라.
+
+`Don't Get Caught`는 폐쇄된 공간을 탐색하며 Fuse를 찾아 전력을 복구하고,  
+좀비의 추격을 피해 탈출하는 1인칭 공포 추격 게임입니다.
+
+전력을 복구할수록 좀비의 이동 속도와 감지 능력이 강화되며,  
+총 3개의 Electrical Panel을 복구하고 탈출하는 것이 목표입니다.
 
 ---
 
-## 🎮 프로젝트 소개
+## Project Info
 
 | 항목 | 내용 |
 | --- | --- |
-| 프로젝트명 | Don't Get Caught |
 | 장르 | 1인칭 공포 / 추격 |
-| 플랫폼 | PC |
-| 개발 엔진 | Unity |
+| 개발 형태 | 개인 프로젝트 |
+| 개발 기간 | 15일 |
+| 개발 인원 | 1명 |
+| 플랫폼 | Windows PC |
+| 개발 엔진 | Unity 2022.3.62f3 |
 | 개발 언어 | C# |
-| 개발 도구 | Unity, Visual Studio 2022 |
-| 버전 관리 | GitHub / GitHub Desktop |
-| 개발 형태 | 개인 미니프로젝트 |
 
 ---
 
-## 🕹️ 게임 플레이
-
-플레이어는 폐건물 내부를 탐색하며 **Key와 Fuse를 획득**하고,  
-총 **3개의 배전함을 복구하여 탈출**해야 합니다.
-
-건물 내부의 Enemy는 주변을 순찰하며 플레이어를 탐색합니다.  
-플레이어를 발견하면 추격하고, 시야에서 놓치면 마지막으로 확인한 위치를 탐색합니다.
+## Game Flow
 
 ```text
 맵 탐색
-   ↓
+    ↓
 Key / Fuse 획득
-   ↓
-잠긴 공간 진입
-   ↓
-Enemy 이벤트 발생
-   ↓
-배전함 탐색 및 Fuse 장착
-   ↓
-배전함 3개 복구
-   ↓
-전력 복구
-   ↓
+    ↓
+이벤트 발생 및 좀비 등장
+    ↓
+Electrical Panel 탐색
+    ↓
+Fuse 설치 및 전력 복구
+    ↓
+좀비 강화
+    ↓
+다음 지역 탐색
+    ↓
+3개의 전력 복구
+    ↓
 탈출
-   ↓
-Game Clear
 ```
 
 ---
 
-## ⚙️ 주요 구현 기능
+## Controls
+
+| Key | Action |
+| --- | --- |
+| `W A S D` | 이동 |
+| `Mouse` | 시점 조작 |
+| `Shift` | 달리기 |
+| `E` | 상호작용 |
+| `F` | 손전등 ON / OFF |
+| `TAB` | 인벤토리 |
+| `ESC` | 메뉴 |
+
+---
+
+## Main Features
 
 ### Player
 
 - CharacterController 기반 1인칭 이동
-- 걷기 / 달리기
-- 마우스 시점 조작
-- 중력 처리
+- Mouse Look 및 달리기
 - 손전등 ON / OFF
-- Animator 기반 걷기 / 달리기 애니메이션
-- Animation Event 기반 발소리
-- Enemy 추격 시 심장박동 연출
+- Key / Fuse Inventory
+- SphereCast 기반 상호작용
 
 ### Enemy AI
 
-- NavMeshAgent 기반 이동
-- `Patrol / Chase / Search` 상태 머신
-- NavMesh 내부 랜덤 순찰
-- 거리 + 시야각 + Raycast 기반 플레이어 감지
-- 플레이어 발견 시 추격
-- 플레이어를 놓쳤을 경우 마지막 목격 위치 탐색
-- 상태에 따른 이동 속도 및 애니메이션 변경
-- 발소리 / 랜덤 음성 / 추격 사운드
+- NavMesh 기반 랜덤 순찰
+- 거리, 시야각, Raycast를 이용한 플레이어 감지
+- `Patrol → Chase → Search` 상태 전환
+- 플레이어를 놓쳤을 경우 마지막 발견 위치 탐색
+- 전력 복구 단계에 따른 Enemy Phase 강화
 
 ### Interaction
 
-- `IInteractable` Interface 기반 공통 상호작용
-- SphereCast 기반 상호작용 오브젝트 감지
-- 상호작용 가능 오브젝트 Outline 표시
-- Door / Key / Fuse / ElectricalPanel 상호작용
-- 여러 개의 Key / Fuse 획득 및 소비
-
-### Door
-
-- 문 열기 / 닫기
-- 잠긴 문 구현
+- Door Open / Close
 - Key를 이용한 잠금 해제
-- Key 사용 시 Inventory에서 소비
-- NavMeshLink 활성화 / 비활성화
-- 이벤트를 통한 강제 문 닫힘 및 잠금
-- 상황별 Door Sound 적용
+- Key / Fuse 획득
+- Electrical Panel 상호작용
+- Outline 및 상호작용 안내 UI
 
-### Electrical Panel
+### Power System
 
-- 총 3개의 배전함 구현
-- Fuse를 이용한 배전함 복구
-- 각 배전함의 Fuse 장착 상태 관리
-- 모든 배전함 복구 여부를 GameManager에서 관리
-- 3개의 배전함 복구 완료 후 전력 복구
-- Fuse 삽입 / 최종 전력 복구 사운드 적용
+- 총 3개의 Electrical Panel
+- Fuse 설치를 통한 전력 복구
+- 전력 복구 진행도 UI
+- 전력 복구 단계에 따른 Enemy 능력치 상승
 
-### Game System
+### Sound
 
-- Key / Fuse Inventory
-- Event Trigger
-- 전력 복구 조건 관리
-- GameOver / GameClear
-- GameOver / GameClear 영상 재생
-- Restart / Main Menu 이동
-- 게임 종료 시 Player / Enemy / Audio 정지
+- Player / Enemy Footstep
+- Zombie Voice
+- Heartbeat
+- Door / Item / Flashlight Sound
+- In-Game / Main Menu BGM
+- UI Sound
 
-### UI / Settings
+### UI
 
 - Main Menu
-- Pause / Resume
-- Settings Menu
+- Pause Menu
+- Settings
+- HOW TO PLAY
+- Mouse Sensitivity
 - BGM ON / OFF
-- Mouse Sensitivity 설정
-- Custom Slider UI
-- Button Hover / Click 효과
-- GameOver / GameClear UI
-
-### Audio
-
-- Main Menu BGM
-- InGame Horror BGM
-- Pause Menu Audio
-- Player 발소리
-- Player 심장박동
-- Enemy 발소리 / 음성 / 추격 사운드
-- Door 열기 / 닫기 / 잠금 사운드
-- Key / Fuse 획득 사운드
-- Fuse 삽입 / 전력 복구 사운드
-- UI Hover / Click 사운드
+- Custom Cursor
+- Game Over / Game Clear
 
 ---
 
-## 🛠️ 사용 기술
+## Enemy AI
 
-`Unity` `C#` `CharacterController` `NavMesh` `NavMeshAgent` `NavMeshLink`
-
-`Raycast` `SphereCast` `LayerMask` `Interface` `Collider` `Trigger`
-
-`Animator` `Animation Event` `AudioSource` `VideoPlayer` `RenderTexture`
-
-`Unity UI` `Slider` `Event Trigger` `Coroutine` `SceneManager`
-
----
-
-## 🔧 주요 트러블슈팅
-
-### Enemy Raycast 감지 문제
-
-Enemy의 Raycast가 Player 대신 Floor를 감지하는 문제가 발생했습니다.
-
-Raycast의 시작점과 Player Target의 높이를 조절하여  
-Enemy의 시야 높이에서 Player를 감지하도록 수정했습니다.
-
-### Map Collider 문제
-
-문이 열려 있어도 Player가 통과하지 못하는 문제가 발생했습니다.
-
-Physics Debugger를 이용하여 Collision Geometry를 확인한 결과  
-맵 Asset의 MeshCollider가 실제 모델과 맞지 않는 영역까지 차지하고 있음을 확인하고 수정했습니다.
-
-### GameOver / GameClear 이후 발소리 재생 문제
-
-PlayerController의 입력을 정지해도 Animator의 Animation Event가 계속 실행되면서  
-게임 종료 이후에도 발소리가 출력되는 문제가 발생했습니다.
-
-게임 종료 시 Animator와 AudioSource를 함께 정지하도록 수정했습니다.
-
-### Pause 상태에서 VideoPlayer가 정지하는 문제
-
-Pause 시 `Time.timeScale = 0`이 적용되면서 Pause Menu 영상도 함께 정지했습니다.
-
-VideoPlayer의 Update Mode를 `Unscaled Game Time`으로 변경하여  
-Pause 상태에서도 영상이 정상적으로 재생되도록 수정했습니다.
-
-### Custom Slider Fill 문제
-
-Mouse Sensitivity Slider의 값이 변경될 때  
-Fill의 왼쪽 시작점까지 함께 움직이는 문제가 발생했습니다.
-
-Fill Image를 다음과 같이 설정하여 시작점을 고정했습니다.
+Enemy는 세 가지 상태를 기반으로 동작합니다.
 
 ```text
-Image Type  = Filled
-Fill Method = Horizontal
-Fill Origin = Left
+Patrol
+  ↓
+플레이어 발견
+  ↓
+Chase
+  ↓
+플레이어 시야 상실
+  ↓
+Search
+  ├─ 플레이어 재발견 → Chase
+  └─ 탐색 실패 → Patrol
 ```
 
-### BGM 설정 유지 문제
+플레이어 감지는 단순 거리만 확인하지 않고 다음 조건을 함께 사용했습니다.
 
-Settings에서 BGM을 OFF한 뒤 Resume하면  
-InGame BGM이 다시 재생되는 문제가 발생했습니다.
+```text
+Distance
++
+Field of View
++
+Raycast
+```
 
-사용자의 BGM 설정 상태를 `_isBgmOn`으로 별도 관리하고,  
-Resume 시 해당 값을 확인한 뒤 BGM을 재생하도록 수정했습니다.
-
-### UI Sound 중복 문제
-
-Main Menu 버튼의 Pointer Enter에 Hover Sound와 Click Sound가 동시에 등록되어  
-마우스를 올리는 것만으로 두 사운드가 함께 재생되는 문제가 발생했습니다.
-
-Pointer Enter에서는 Hover Sound만 실행하고,  
-Click Sound는 Button OnClick에서만 실행하도록 역할을 분리했습니다.
+랜덤 순찰에서는 `NavMesh.SamplePosition()`으로 찾은 위치가 실제로 도달 가능한지  
+`NavMesh.CalculatePath()`와 `PathComplete`를 통해 추가로 확인하도록 구현했습니다.
 
 ---
 
-## 📌 개발 현황
+## Enemy Phase
 
-- [x] Player 이동 / 카메라
-- [x] Player Animator
-- [x] 손전등
-- [x] Enemy Patrol / Chase / Search
-- [x] Player Detection
-- [x] SphereCast Interaction
-- [x] Interaction Outline
-- [x] Key / Fuse Inventory
-- [x] Door System
-- [x] Event Trigger
-- [x] Electrical Panel
-- [x] 3개 배전함 복구 시스템
-- [x] GameOver / GameClear
-- [x] Main Menu
-- [x] Pause Menu
-- [x] Settings Menu
-- [x] BGM ON / OFF
-- [x] Mouse Sensitivity
-- [x] Custom Slider
-- [x] Player / Enemy Audio
-- [x] Interaction Audio
-- [x] UI Audio
-- [x] Map Collider 수정
-- [ ] Lighting Polish
-- [ ] Horror Event Polish
-- [ ] Enemy 세부 밸런싱
-- [ ] 전체 플레이 테스트 및 버그 수정
+Electrical Panel을 복구할수록 Enemy의 난이도가 상승합니다.
+
+| Phase | Patrol Speed | Chase Speed | Detect Distance |
+| --- | ---: | ---: | ---: |
+| Phase 1 | 2.5 | 4.5 | 9 |
+| Phase 2 | 3.0 | 5.0 | 10 |
+| Phase 3 | 3.5 | 5.5 | 11 |
+
+각 Phase마다 서로 다른 Zombie Sound를 적용하여 난이도 변화를 전달하도록 구성했습니다.
 
 ---
 
-## 📚 프로젝트를 통해 배운 점
+## Tech Stack
 
-이번 프로젝트를 통해 단순히 각각의 기능을 구현하는 것뿐만 아니라  
-여러 시스템이 서로 연결될 때 **상태와 역할을 분리하여 관리하는 방법**을 경험했습니다.
+### Development
 
-특히 Player, Enemy, Inventory, Interaction, UI, Audio 등의 시스템을 연결하면서  
-하나의 상태 변화가 다른 시스템에 어떤 영향을 주는지 고려하며 구현하는 경험을 할 수 있었습니다.
+- Unity 2022.3.62f3
+- C#
+- Visual Studio 2022
+- Git / GitHub
+- GitHub Desktop
 
-또한 문제 발생 시 Script만 확인하는 것이 아니라  
-Hierarchy, Inspector, Collider, Animator, Event 연결 상태 등을 함께 확인하며  
-Unity 프로젝트를 디버깅하는 방법을 익혔습니다.
+### Unity
+
+- CharacterController
+- NavMesh / NavMeshAgent / NavMeshLink
+- Raycast / SphereCast
+- Animator / Animation Event
+- AudioSource
+- VideoPlayer / Render Texture
+- TextMeshPro
+- CanvasGroup
 
 ---
 
-## 🚧 향후 계획
+## Troubleshooting
 
-- Lighting 및 환경 연출 개선
-- 공포 이벤트 연출 강화
-- Enemy 추격 밸런스 조정
-- Audio Volume 세부 조정
-- UI 세부 Polish
-- 전체 플레이 동선 점검
-- 최종 버그 수정
-- Build 및 플레이 영상 제작
+### NavMesh 랜덤 순찰
+
+`NavMesh.SamplePosition()`으로 선택한 위치가 NavMesh 위에 존재하더라도  
+현재 Enemy 위치에서 실제로 도달할 수 없는 경우가 있었습니다.
+
+`NavMesh.CalculatePath()`로 경로를 추가 검증하고  
+`PathComplete`인 목적지만 선택하도록 수정하여 해결했습니다.
+
+### Enemy Footstep
+
+AudioSource와 AudioClip에는 문제가 없었지만 발소리가 재생되지 않았습니다.
+
+호출 과정을 확인한 결과 Walk / Run Animation의 Animation Event가 사라진 것이 원인이었고,  
+발이 지면에 닿는 Frame에 Event를 다시 설정하여 해결했습니다.
+
+### Event Room Soft Lock
+
+이벤트 발생 시 Door가 잠기는 기존 구조에서 Fuse와 Electrical Panel의 위치를 변경하면서  
+플레이어가 방에서 나갈 수 없는 상황이 발생할 가능성이 있었습니다.
+
+Door가 강제로 닫히는 연출은 유지하고 잠금 처리는 제거하여  
+게임 진행이 막히지 않도록 수정했습니다.
+
+### GameOverTrigger
+
+Hierarchy 정리 과정에서 Zombie의 자식이었던 GameOverTrigger를 분리하면서  
+Trigger가 시작 위치에 남아 게임 시작 직후 Game Over가 발생했습니다.
+
+GameOverTrigger를 다시 Zombie의 자식으로 배치하여 해결했습니다.
+
+---
+
+## Development Status
+
+**Version 1.0**
+
+Windows Build 완료
+
+- Core Gameplay
+- Player System
+- Enemy AI
+- Interaction System
+- Inventory
+- Power System
+- Sound / Lighting
+- UI / Menu
+- Pause / Settings
+- Game Over / Game Clear
+- Windows Build
+
+---
+
+## Developer
+
+**서요셉**
+
+Unity와 C#을 학습하며 제작한 개인 미니프로젝트입니다.
