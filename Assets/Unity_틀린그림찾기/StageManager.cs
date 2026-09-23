@@ -27,15 +27,19 @@ public class StageManager : MonoBehaviour
 
     [Header("추가시간")]
     [SerializeField] private float _bonusTime = 2.0f;
+
+    [Header("Sound")]
+    [SerializeField] private AudioSource _audioSource;
+
+    [SerializeField] private AudioClip _correctSound;
+    [SerializeField] private AudioClip _wrongSound;
+    [SerializeField] private AudioClip _mainBGM;
     #endregion
 
     #region 변수
     private float _currentTime;
     private bool _isGameEnd = false;
 
-    #endregion
-
-    #region 변수
     private int _findCount = 0;
     private int _maxFindCount = 5;
     private int _currentStage = 1;
@@ -50,6 +54,10 @@ public class StageManager : MonoBehaviour
 
         _timeSlider.maxValue = _maxTime;
         _timeSlider.value = _currentTime;
+
+        _audioSource.clip = _mainBGM;
+        _audioSource.loop = true;
+        _audioSource.Play();
     }
 
     private void Update()
@@ -111,6 +119,7 @@ public class StageManager : MonoBehaviour
     public void FindAnswer()
     {
         _findCount++;
+        _audioSource.PlayOneShot(_correctSound);
         _findCountText.text = $"{_findCount} / {_maxFindCount}";
         _currentTime += _bonusTime;
 
@@ -129,6 +138,7 @@ public class StageManager : MonoBehaviour
     public void WrongClick()
     {
         _currentTime -= _penaltyTime;
+        _audioSource.PlayOneShot(_wrongSound);
 
         if (_currentTime <= 0)
         {
