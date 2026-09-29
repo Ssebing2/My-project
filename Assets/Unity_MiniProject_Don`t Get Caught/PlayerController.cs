@@ -162,7 +162,7 @@ public class PlayerController : MonoBehaviour
             if (interactable != null)
             {
                 // 오브젝트 위치를 화면 좌표로 변환
-                Vector3 screenPosition = Camera.main.WorldToScreenPoint(hit.transform.position);
+                Vector3 screenPosition = UnityEngine.Camera.main.WorldToScreenPoint(hit.transform.position);
 
                 // [E] 문구를 오브젝트 옆으로 이동
                 _interactText.transform.position = screenPosition + (Vector3)_interactTextOffset;

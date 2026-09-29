@@ -34,7 +34,7 @@ public class ShootingGameManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = UnityEngine.Camera.main.ScreenPointToRay(Input.mousePosition);
 
             RaycastHit hit;
 
